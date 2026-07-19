@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anar - Beşiktaş Real 3D Təbrik Zərfi</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a1a1a, #000000);
+            font-family: 'Arial Black', Gadget, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1500px;
+        }
+
+        /* 3D Zərf Konteyneri */
+        .envelope-container {
+            position: relative;
+            width: 360px;
+            height: 240px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .envelope-container:hover {
+            transform: scale(1.05) rotateY(5deg);
+        }
+
+        /* Zərfin ARXA fonu - Beşiktaş Zolaqlı Dizayn */
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #000000,
+                #000000 30px,
+                #ffffff 30px,
+                #ffffff 60px
+            );
+            border: 3px solid #d4af37;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            z-index: 1;
+        }
+
+        /* Zərfin Ön tərəfindəki Dizayn */
+        .envelope-front-design {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .envelope-title {
+            color: #d4af37;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px #000;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Realistik 3D Qartal Şəkli */
+        .real-eagle {
+            width: 140px;
+            height: auto;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.8));
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.03); }
+        }
+
+        /* Zərfin içindən çıxacaq Təbrik Şəkli */
+        .birthday-photo {
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            width: 90%;
+            transform: scale(0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 2;
+            opacity: 0;
+        }
+
+        /* Zərfin Yan və Aşağı Qapaqları */
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .envelope-front::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-left: 180px solid transparent;
+            border-right: 180px solid transparent;
+            border-bottom: 135px solid #111111;
+        }
+
+        .envelope-front::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-top: 120px solid transparent;
+            border-bottom: 120px solid transparent;
+            border-left: 180px solid #1a1a1a;
+        }
+
+        .envelope-right-wing {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-top: 120px solid transparent;
+            border-bottom: 120px solid transparent;
+            border-right: 180px solid #151515;
+            z-index: 4;
+        }
+
+        /* Üst Qapaq */
+        .envelope-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 180px solid transparent;
+            border-right: 180px solid transparent;
+            border-top: 130px solid #0a0a0a;
+            transform-origin: top;
+            transition: transform 0.8s ease;
+            z-index: 5;
+        }
+
+        /* Kliklədikdə Zərfin Açılması */
+        .open .envelope-top {
+            transform: rotateX(180deg);
+            z-index: 1;
+            border-top-color: #111;
+        }
+
+        .open .envelope-front-design {
+            opacity: 0;
+        }
+
+        /* Şəklin mərkəzə çıxması */
+        .open .birthday-photo {
+            top: -180px;
+            left: -170px;
+            width: 700px;
+            max-width: 90vw;
+            transform: scale(1);
+            z-index: 100;
+            opacity: 1;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 40px rgba(212,175,55,0.3);
+            border: 6px solid #ffffff;
+        }
+
+        /* ASTA-ASTA SIÇRAYAN VƏ TAM AŞAĞI DÜŞƏN TOPLAR */
+        .soccer-ball {
+            position: absolute;
+            font-size: 35px;
+            pointer-events: none;
+            z-index: 60;
+            animation: bounceAndFall 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes bounceAndFall {
+            0% {
+                transform: translate3d(0, 0, 0) scale(0.3) rotate(0deg);
+                opacity: 1;
+            }
+            20% {
+                transform: translate3d(calc(var(--x) * 0.4), calc(var(--y) * 0.6), calc(var(--z) * 0.4)) scale(1.3) rotate(180deg);
+            }
+            50% {
+                transform: translate3d(calc(var(--x) * 0.75), calc(var(--y) * 0.85), calc(var(--z) * 0.75)) scale(1.6) rotate(360deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(var(--x), calc(var(--y) + 600px), var(--z)) scale(1.0) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .open.envelope-container {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Beşiktaş Dizaynlı 3D Zərf -->
+    <div class="envelope-container" id="envelope" onclick="animateEnvelope()">
+        <div class="envelope-top"></div>
+        <div class="envelope-back"></div>
+        
+        <!-- Üstündəki 3D Qartal və Başlıq -->
+        <div class="envelope-front-design">
+            <div class="envelope-title">ANAR ÜÇÜN XÜSUSİ QOL! ⚽</div>
+            <!-- Yüksək keyfiyyətli, şəffaf 3D Beşiktaş Qartalı linki yerləşdirildi -->
+            <img src="WhatsApp_Image_2026-07-19_at_20.24.57-removebg-preview.png" alt="3D Beşiktaş Qartalı" class="real-eagle">
+        </div>
+        
+        <!-- İçindən çıxacaq ad günü təbrik şəkliniz -->
+        <img src="WhatsApp Image 2026-07-19 at 20.02.26.jpeg" alt="Ad Günün Mübarək Anar" class="birthday-photo" id="photo">
+        
+        <div class="envelope-front"></div>
+        <div class="envelope-right-wing"></div>
+    </div>
+
+    <script>
+        function animateEnvelope() {
+            const envelope = document.getElementById('envelope');
+            
+            if(envelope.classList.contains('open')) return;
+
+            envelope.classList.add('open');
+
+            // Sıçrayan topları yarat
+            createBounceBalls();
+        }
+
+        function createBounceBalls() {
+            const envelope = document.getElementById('envelope');
+            const rect = envelope.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 40; i++) {
+                const ball = document.createElement('div');
+                ball.className = 'soccer-ball';
+                ball.innerText = '⚽';
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 280 + Math.random() * 320;
+                
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * 120 - 200; 
+                const z = 200 + Math.random() * 300;
+
+                ball.style.setProperty('--x', `${x}px`);
+                ball.style.setProperty('--y', `${y}px`);
+                ball.style.setProperty('--z', `${z}px`);
+
+                ball.style.animationDelay = `${Math.random() * 0.3}s`;
+
+                ball.style.left = `${centerX - 18}px`;
+                ball.style.top = `${centerY - 18}px`;
+
+                document.body.appendChild(ball);
+
+                ball.addEventListener('animationend', () => {
+                    ball.remove();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
